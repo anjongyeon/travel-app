@@ -2,7 +2,6 @@
   display: flex;
   width: 100%;
   height: calc(100vh - 60px);
-  /* 헤더 높이 제외 */
   position: relative;
 }
 
@@ -95,7 +94,6 @@
 .place-info {
   margin-bottom: 8px;
   cursor: pointer;
-  /* 클릭 가능함을 나타내는 커서 추가 */
   padding: 5px;
   border-radius: 4px;
   transition: background-color 0.2s;
@@ -103,7 +101,6 @@
 
 .place-info:hover {
   background-color: #f5f5f5;
-  /* 호버 효과 추가 */
 }
 
 .place-info strong {
@@ -225,7 +222,6 @@
   background-color: #c0392b;
 }
 
-/* 반응형 스타일 */
 @media screen and (max-width: 768px) {
   .map-container {
     flex-direction: column;
