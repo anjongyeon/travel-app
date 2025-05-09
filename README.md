@@ -21,7 +21,9 @@ yarn start
 - 브라우저에서 http://localhost:3000 으로 접속하여 애플리케이션 사용
 
 ### GitHub 수정하는 방법
+```bash
 git add .
 git add README.md
-git commit -m "수정한 내용에 대한 설명"
+git commit -m "수정"
 git push origin main
+```

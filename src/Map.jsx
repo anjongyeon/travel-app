@@ -2,17 +2,23 @@ import React, { useEffect, useState, useRef } from 'react';
 import './Map.css';
 
 const { kakao } = window;
-const Map = () => {
 
+const Map = () => {
   const mapRef = useRef(null);
+
   const [map, setMap] = useState(null);
+
   const [pointObj, setPointObj] = useState({
     startPoint: { marker: null, lat: null, lng: null },
     endPoint: { marker: null, lat: null, lng: null }
   });
+
   const [polyline, setPolyline] = useState(null);
+
   const [searchKeyword, setSearchKeyword] = useState('');
+
   const [searchResults, setSearchResults] = useState([]);
+
   const [searching, setSearching] = useState(false);
 
   useEffect(() => {
@@ -25,6 +31,7 @@ const Map = () => {
     };
 
     const kakaoMap = new kakao.maps.Map(mapContainer, mapOptions);
+
     const zoomControl = new kakao.maps.ZoomControl();
     kakaoMap.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
 
@@ -34,12 +41,13 @@ const Map = () => {
 
   useEffect(() => {
     if (!map) return; 
+
     for (const point in pointObj) {
       if (pointObj[point].marker) {
         pointObj[point].marker.setMap(map);
       }
     }
-  }, [pointObj, map]);
+  }, [pointObj, map]); 
 
   const searchPlaces = () => {
     if (!map || !searchKeyword.trim()) {
@@ -48,7 +56,6 @@ const Map = () => {
     }
 
     setSearching(true);
-
     setSearchResults([]);
 
     const places = new kakao.maps.services.Places();
@@ -69,24 +76,29 @@ const Map = () => {
   const moveToPlace = (place) => {
     const lat = parseFloat(place.y);
     const lng = parseFloat(place.x);
+
     panTo({ lat, lng });
   };
 
   const selectSearchResult = (place, pointType) => {
     const lat = parseFloat(place.y);
     const lng = parseFloat(place.x);
+
     setPoint({ lat, lng }, pointType);
+
     panTo({ lat, lng });
   };
 
   function panTo({ lat, lng }) {
-    if (!mapRef.current) return;
+    if (!mapRef.current) return; 
+
     const moveLatLon = new kakao.maps.LatLng(lat, lng);
+
     mapRef.current.panTo(moveLatLon);
   }
 
   function setPoint({ lat, lng }, pointType) {
-    if (!mapRef.current) return;
+    if (!mapRef.current) return; 
 
     const imageSrc = pointType === 'startPoint'
       ? '//t1.daumcdn.net/localimg/localimages/07/mapapidoc/red_b.png'
@@ -99,10 +111,10 @@ const Map = () => {
     const markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
 
     let marker = new kakao.maps.Marker({
-      position: new kakao.maps.LatLng(lat, lng),
+      position: new kakao.maps.LatLng(lat, lng), 
       image: markerImage 
     });
-   
+
     setPointObj(prev => {
       if (prev[pointType].marker !== null) {
         prev[pointType].marker.setMap(null);
@@ -116,27 +128,9 @@ const Map = () => {
     }
   }
 
-  const getCurrentLocation = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const lat = position.coords.latitude;
-          const lng = position.coords.longitude;
-          panTo({ lat, lng });
-          setPoint({ lat, lng }, 'startPoint');
-        },
-        (error) => {
-          console.error('현재 위치 오류:', error);
-          alert('현재 위치를 가져오는데 실패했습니다.');
-        }
-      );
-    } else {
-      alert('브라우저에서 위치 정보를 지원하지 않습니다.');
-    }
-  };
-
   async function getCarDirection() {
     if (!mapRef.current) return; 
+
     if (!pointObj.startPoint.lat || !pointObj.endPoint.lat) {
       alert('출발지와 목적지를 모두 설정해주세요.');
       return;
@@ -148,21 +142,25 @@ const Map = () => {
 
       const origin = `${pointObj.startPoint.lng},${pointObj.startPoint.lat}`;
       const destination = `${pointObj.endPoint.lng},${pointObj.endPoint.lat}`;
+
       const headers = {
-        Authorization: `KakaoAK ${REST_API_KEY}`,
+        Authorization: `KakaoAK ${REST_API_KEY}`, 
         'Content-Type': 'application/json'
       };
+
       const queryParams = new URLSearchParams({
         origin,
         destination
       });
       const requestUrl = `${url}?${queryParams}`;
+
       const response = await fetch(requestUrl, {
         method: 'GET',
         headers
       });
 
       if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+
       const data = await response.json();
 
       const linePath = [];
@@ -178,10 +176,10 @@ const Map = () => {
       if (polyline) polyline.setMap(null);
 
       const newPolyline = new kakao.maps.Polyline({
-        path: linePath, 
-        strokeWeight: 5,
-        strokeColor: '#0000FF', 
-        strokeOpacity: 0.7, 
+        path: linePath,
+        strokeWeight: 5, 
+        strokeColor: '#0000FF',
+        strokeOpacity: 0.7,
         strokeStyle: 'solid' 
       });
 
@@ -251,6 +249,7 @@ const Map = () => {
   return (
     <div className="map-container">
       <div id="map" className="map"></div>
+
       <div className="search-panel">
         <h2>장소 검색</h2>
 
@@ -293,6 +292,7 @@ const Map = () => {
 
         <div className="route-actions">
           <h3>경로 찾기</h3>
+
           <div className="location-status">
             <div className="location-point">
               <span className="point-label">출발지:</span>
@@ -308,13 +308,9 @@ const Map = () => {
               </span>
             </div>
           </div>
+
           <div className="action-buttons">
-            <button
-              className="route-button"
-              onClick={getCurrentLocation}
-            >
-              현재 위치
-            </button>
+            
             <button
               className="route-button"
               onClick={getCarDirection}
@@ -322,6 +318,7 @@ const Map = () => {
             >
               경로 찾기
             </button>
+
             <button
               className="reset-button"
               onClick={resetAll}
